@@ -1,4 +1,4 @@
-def process_corpora(input_files_dir:str, output_dir:str='.\\output', logs_output_dir:str='.\\logs_output'):
+def process_corpora(input_files_dir:str, output_dir:str='.\\output', logs_output_dir:str='.\\logs_output', start:int=0, end:int=-1):
     # Импорт сторонних модулей
     import os
     from tqdm import tqdm
@@ -8,7 +8,7 @@ def process_corpora(input_files_dir:str, output_dir:str='.\\output', logs_output
 
     # Программа
     ## Список, в котором содержатся пути к требуемым .pdf-файлам
-    all_files = [f"{os.path.join(input_files_dir, file)}" for file in os.listdir(input_files_dir)][0:6]
+    all_files = [f"{os.path.join(input_files_dir, file)}" for file in os.listdir(input_files_dir)][start:end]
 
     ## Переменные
     ### Список для хранения логов
