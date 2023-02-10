@@ -11,5 +11,5 @@ if __name__ == '__main__':
             exit()
         else:
             process_corpora(input_files_dir=input_files_dir)
-        
+    else:
         process_corpora(input_files_dir=input_files_dir)

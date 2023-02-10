@@ -19,7 +19,7 @@ def printc_console_log(log_object):
     print(colored(log_string, color))
     
 
-def log_it(log_flow:list, output_path:str = './logs'):
+def log_it(log_flow:list, output_path:str = './logs', prefix:str=''):
     # Импорт сторонних модулей
     import os
     from datetime import datetime
@@ -79,7 +79,11 @@ def log_it(log_flow:list, output_path:str = './logs'):
         pass
     
     ## Вывод html-файла с логом
-    with open(f'{output_path}/log_{today.strftime("%b-%d-%Y %H-%M-%S")}.html', 'w+', encoding='utf-8') as html:
-        html.write(template)
+    if prefix == '':
+        with open(f'{output_path}/log_{today.strftime("%b-%d-%Y %H-%M-%S")}.html', 'w+', encoding='utf-8') as html:
+            html.write(template)
+    else:
+        with open(f'{output_path}/{prefix}_log_{today.strftime("%b-%d-%Y %H-%M-%S")}.html', 'w+', encoding='utf-8') as html:
+            html.write(template)     
 
 

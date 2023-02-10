@@ -5,9 +5,9 @@ def _get_bigrams(token_index, tokens):
             tokens[token_index:token_index+2]
         ]
     elif token_index == 0:
-        return tokens[token_index:token_index+2]
+        return [tokens[token_index:token_index+2]]
     else:
-        return tokens[token_index-1:token_index+1]
+        return [tokens[token_index-1:token_index+1]]
 
 def sent_tokenize_text(text_on_page):
     from nltk import sent_tokenize

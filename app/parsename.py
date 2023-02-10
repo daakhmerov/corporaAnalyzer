@@ -11,7 +11,7 @@ def parse_filename(pdf_file_name:str):
     
     full_number_parsed = re.findall(number_pattern, file_name)
     if len(full_number_parsed) > 0:
-        number_parsed = re.findall(r'\d', full_number_parsed[0])[0]
+        number_parsed = re.findall(r'\d{1,3}', full_number_parsed[0])[0]
     else:
         number_parsed = None
 
