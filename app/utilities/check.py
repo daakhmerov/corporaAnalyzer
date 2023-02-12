@@ -1,5 +1,5 @@
-def check_pdf_file(pdf_file_path:str):
-    # Импорт сторонних модулей 
+def check_pdf_file(pdf_file_path: str):
+    # Импорт сторонних модулей
     import PyPDF2
     import os
 
@@ -7,13 +7,13 @@ def check_pdf_file(pdf_file_path:str):
     from app import LogString
 
     # Программа
-    ## Проверка .pdf-файла
+    # Проверка .pdf-файла
     try:
         try:
             reader = PyPDF2.PdfReader(pdf_file_path)
 
             for page in reader.pages:
-                text = page.extract_text()  
+                text = page.extract_text()
                 if len(text) == 0:
                     return LogString('danger', f'В файле "{os.path.split(pdf_file_path)[-1]}" не найден текстовый слой')
                 else:

@@ -1,7 +1,7 @@
 # {'status':'Success', 'log_string':f'-- Файл "{os.path.split(pdf_file_path)[-1]}" успешно обработан --'}
 class LogString:
     status: str
-    message:str
+    message: str
 
     def __init__(self, status, message):
         self.status = status
@@ -44,9 +44,10 @@ class LogString:
         return f'<LogString. Status: {self.status}, message: {self.message.strip()}>'
 
     def to_dict(self):
-        return {'status':self.status, 'description':self.message.strip()}
-    
-def log_to_json(log_flow:list, project_dir:str):
+        return {'status': self.status, 'description': self.message.strip()}
+
+
+def log_to_json(log_flow: list, project_dir: str):
     # Импорт сторонних библиотек
     import os
     import json
@@ -58,7 +59,7 @@ def log_to_json(log_flow:list, project_dir:str):
     # Переменные
     today = datetime.now()
 
-    ## Создание каталога для логов
+    # Создание каталога для логов
     try:
         os.mkdir(log_output_dir)
     except:
@@ -69,7 +70,8 @@ def log_to_json(log_flow:list, project_dir:str):
         data = [log.dict for log in log_flow]
         json.dump(data, log, ensure_ascii=False)
 
-def log_to_html(log_flow:list, project_dir:str):
+
+def log_to_html(log_flow: list, project_dir: str):
     # Импорт сторонних модулей
     import os
     from datetime import datetime
@@ -81,10 +83,10 @@ def log_to_html(log_flow:list, project_dir:str):
     today = datetime.now()
 
     # Обработка данных
-    ## Создание списка log_html_fragments для хранения html-фрагментов с текстом лога
+    # Создание списка log_html_fragments для хранения html-фрагментов с текстом лога
     log_html_fragments = []
 
-    ## Добавление html-элементов в список log_html_fragments
+    # Добавление html-элементов в список log_html_fragments
     for i, log in enumerate(log_flow):
         status = log.status
         string_text = log.message.strip()
@@ -100,11 +102,11 @@ def log_to_html(log_flow:list, project_dir:str):
 
         log_html_fragments.append(html_code)
 
-    ## Создание html-строки
+    # Создание html-строки
     html_log_text = '\n'.join(log_html_fragments)
 
     # Вывод данных
-    ## Файл шаблона
+    # Файл шаблона
     template = f'''
     <!DOCTYPE html>
     <html lang="en">
@@ -127,13 +129,12 @@ def log_to_html(log_flow:list, project_dir:str):
     </body>
     </html>
     '''
-    ## Создание каталога для логов
+    # Создание каталога для логов
     try:
         os.mkdir(log_output_dir)
     except:
         pass
-    
-    ## Вывод html-файла с логом
+
+    # Вывод html-файла с логом
     with open(os.path.join(log_output_dir, f'log_{today.strftime("%b-%d-%Y %H-%M-%S")}.html'), 'w+', encoding='utf-8') as html:
         html.write(template)
-

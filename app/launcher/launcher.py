@@ -7,6 +7,7 @@ def welcome_page():
     def dec_len(char):
         return char * (len(f'{__version__}{name}') + 1)
     # Определение функций
+
     def launch():
         from app.analyzing.analyze import analyze_project
 
@@ -26,5 +27,6 @@ def welcome_page():
                 if input('Нажмите Enter, чтобы закрыть программу...'):
                     exit()
 
-    print(colored(f'{dec_len("=")}\nNewspaperAnalyzer {__version__}\n{dec_len("=")}', 'magenta'))
+    print(colored(
+        f'{dec_len("=")}\nNewspaperAnalyzer {__version__}\n{dec_len("=")}', 'magenta'))
     launch()

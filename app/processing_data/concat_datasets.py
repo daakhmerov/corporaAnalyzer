@@ -5,7 +5,8 @@ def concat_datasets(data_dir):
     import os
 
     # Обработка данных
-    main_df = pd.concat([pd.read_json(cj.load(os.path.join(data_dir, file_path)), orient='table') for file_path in os.listdir(data_dir)]).reset_index(drop=True)
+    main_df = pd.concat([pd.read_json(cj.load(os.path.join(data_dir, file_path)), orient='table')
+                        for file_path in os.listdir(data_dir)]).reset_index(drop=True)
 
     # Вывод данных
     return main_df

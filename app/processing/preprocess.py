@@ -1,9 +1,10 @@
 import re
 
-def clean_hyphenation(text_on_page:str):
+
+def clean_hyphenation(text_on_page: str):
     replace_dict = {
-        '-\n':'',
-        '- ':'',
+        '-\n': '',
+        '- ': '',
     }
 
     for k in replace_dict.keys():
@@ -11,16 +12,18 @@ def clean_hyphenation(text_on_page:str):
 
     return text_on_page
 
-def remove_newlines(text_on_page:str):
+
+def remove_newlines(text_on_page: str):
     text_on_page = re.sub('\n', ' ', text_on_page)
 
     return text_on_page
 
-def remove_numbers(text_on_page:str):
+
+def remove_numbers(text_on_page: str):
     return re.sub(r'\d+', '', text_on_page)
 
 
-def preprocess_text(text_on_page:str):
+def preprocess_text(text_on_page: str):
     # Converting text to lowercase
     text_on_page = text_on_page.lower()
 
