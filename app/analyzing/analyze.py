@@ -1,6 +1,7 @@
 def analyze_project(project_dir: str, clean_data:bool=True, output_to_project_dir:bool=True):
     # Импорт сторонних библиотек
     import os
+    from tqdm import tqdm
 
     # Импорт локальных библиотек
     from app import pipeline, LogString, log_to_json, log_to_html
@@ -13,7 +14,7 @@ def analyze_project(project_dir: str, clean_data:bool=True, output_to_project_di
     log_flow = []
 
     # Обработка данных
-    for subdir in project_subdirs:
+    for subdir in tqdm(project_subdirs):
         if os.path.split(subdir)[-1][0] != '.':
             log_flow.append(LogString('section', f'Корпус — {subdir}'))
             try:

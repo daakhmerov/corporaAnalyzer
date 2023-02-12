@@ -5,7 +5,7 @@ class LogString:
 
     def __init__(self, status, message):
         self.status = status
-        self.message = f'\n{message}'
+        self.message = f'\n{message}, RAM: {self.return_ram_status()}'
         self.log = self.return_log()
         self.bash = self.print_to_bash()
         self.dict = self.to_dict()
@@ -27,6 +27,15 @@ class LogString:
             color = 'red'
 
         return colored(self.message, color)
+
+    def return_ram_status(self):
+        import psutil
+        import os
+
+        # return the memory usage in percentage like top
+        process = psutil.Process(os.getpid())
+        mem = process.memory_percent()
+        return round(mem, 2)
 
     def print_to_bash(self):
         print(self.return_log())

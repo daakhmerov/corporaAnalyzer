@@ -1,5 +1,5 @@
 name = 'NewspaperAnalyzer'
-__version__ = '0.1'
+__version__ = '0.1.1b'
 
 from app.processing.process_corpora import process_corpora
 from app.processing.preprocess import preprocess_text
