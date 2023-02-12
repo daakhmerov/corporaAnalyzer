@@ -8,7 +8,7 @@ from app.processing.process_corpora_dataframes import process_corpora_dataframes
 from app.processing_data.process_data import tokens_to_df
 from app.parsing.parsemeta import parse_issue_date
 from app.utilities.log import log_to_html, log_to_json, LogString
-from app.utilities.check import check_pdf_file
+from app.utilities.check import check_pdf_file, find_checkpoint, made_checkpoint
 from app.processing.process import process_newspaper
 from app.parsing.parsename import parse_filename
 from app.processing.preprocess import preprocess_text

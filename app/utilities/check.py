@@ -24,3 +24,27 @@ def check_pdf_file(pdf_file_path: str):
         return LogString('danger', f'Файл "{os.path.split(pdf_file_path)[-1]}" пуст')
     except Exception as e:
         return LogString('danger', f'Файл "{os.path.split(pdf_file_path)[-1]}". Ошибка {e}')
+
+def made_checkpoint(dir:str):
+    # Импорт необходимых модулей
+    import os
+
+    # Пути
+    checkpoint_file = os.path.join(dir, f'{os.path.split(dir)[-1]}.checkpoint')
+
+    # Создание файла
+    with open(checkpoint_file, 'w+', encoding='utf-8') as f:
+        f.write(
+            f'- Checkpoint: "{dir}"'
+        )
+
+def find_checkpoint(dir:str):
+    # Импорт необходимых модулей
+    import os
+
+    # Обработка данных
+    for f in os.listdir(dir):
+        if os.path.splitext(f)[-1] == '.checkpoint':
+            return True
+        else:
+            return False

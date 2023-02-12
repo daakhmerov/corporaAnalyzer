@@ -4,7 +4,7 @@ def pipeline(project_subdir: str, log_flow: list, clean_data: bool = True, start
     import compress_json as cj
 
     # Импорт локальных библиотек
-    from app import process_corpora, process_corpora_dataframes, concat_datasets, LogString, delete_dir
+    from app import process_corpora, process_corpora_dataframes, concat_datasets, LogString, delete_dir, find_checkpoint
 
     # Пути
     data_output = os.path.join(project_subdir, 'data')
@@ -31,14 +31,10 @@ def pipeline(project_subdir: str, log_flow: list, clean_data: bool = True, start
             try:
                 log_flow.append(LogString(
                     'warning', f'Создание датасета {data_output}...'))
-                main_df = concat_datasets(data_output).to_json(
+                main_df = concat_datasets(data_output, log_flow).to_json(
                     orient='table', force_ascii=False)
                 log_flow.append(LogString(
                     'success', f'Датасеты из директории {data_output} успешно объединены'))
-
-                # Очистка директорий с промежуточными данными
-                if clean_data is True:
-                    delete_dir(data_output, log_flow)
 
                 # Вывод данных
                 try:
@@ -46,6 +42,10 @@ def pipeline(project_subdir: str, log_flow: list, clean_data: bool = True, start
                             f'{os.path.split(project_subdir)[-1]}_corpora_dataset.json.gz'), json_kwargs={'ensure_ascii': False})
                     log_flow.append(LogString(
                         'success', f'Датасет "{os.path.split(project_subdir)[-1]}_corpora_dataset.json.gz" успешно создан'))
+
+                    # Очистка директорий с промежуточными данными
+                    if clean_data is True:
+                        delete_dir(data_output, log_flow)
                 except Exception as e:
                     log_flow.append(
                         LogString('danger', f'Ошибка вывода общего для корпуса датасета\n⤷{e}\n'))

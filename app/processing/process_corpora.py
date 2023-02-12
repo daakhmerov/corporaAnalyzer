@@ -4,7 +4,7 @@ def process_corpora(input_files_dir: str, output_dir: str, log_flow: list, start
     from tqdm import tqdm
 
     # Импорт локальных модулей
-    from app import check_pdf_file, process_newspaper, LogString
+    from app import check_pdf_file, process_newspaper, LogString, made_checkpoint
 
     # Программа
     # Список, в котором содержатся пути к требуемым .pdf-файлам
@@ -32,6 +32,7 @@ def process_corpora(input_files_dir: str, output_dir: str, log_flow: list, start
                     process_result = process_newspaper(
                         file, log_flow, output_dir)
                     log_flow.append(process_result)
+                    made_checkpoint(output_dir)
             else:
                 continue
 

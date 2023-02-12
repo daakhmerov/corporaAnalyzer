@@ -23,7 +23,6 @@ def analyze_project(project_dir: str, clean_data: bool = True, output_to_project
             except Exception as e:
                 log_flow.append(
                     LogString('danger', f'Ошибка обработки корпуса\n⤷{e}\n'))
-
-    # Создание логов
-    log_to_json(log_flow, project_dir)
-    log_to_html(log_flow, project_dir)
+        # Создание логов
+        log_to_json(log_flow, project_dir)
+        log_to_html(log_flow, project_dir)
