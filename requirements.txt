@@ -1,0 +1,16 @@
+autopep8==2.0.1
+compress-json==1.0.8
+cython==0.29.33
+ipykernel==6.20.2
+layoutparser==0.3.4
+levenshtein==0.20.9
+nbformat==5.7.3
+nltk==3.8.1
+openpyxl==3.1.0
+pip-chill==1.0.1
+pipreqs==0.4.11
+plotly==5.13.0
+pycocotools==2.0
+pyenchant==3.2.2
+pypdf2==3.0.1
+termcolor==2.2.0
