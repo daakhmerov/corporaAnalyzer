@@ -17,7 +17,18 @@ def welcome_page():
             exit()
         else:
             try:
-                analyze_project(project_dir)
+                def ask_gen():
+                    ask = input('Нужно ли сгенерировать единые датафреймы по каждому корпусу? Д\н: ').lower()
+                    if  ask == 'д' or ask == 'y':
+                        analyze_project(project_dir)
+                    elif ask == 'н' or ask == 'n':
+                        analyze_project(project_dir, generate_df=False)
+                    else:
+                        print(
+                            colored(f'Попробуйте снова: ', 'red'))
+                        ask_gen()
+
+                ask_gen()
             except FileNotFoundError as f_e:
                 print(
                     colored(f'Не удается найти указанный путь. Попробуйте снова: ', 'red'))

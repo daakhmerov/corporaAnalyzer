@@ -1,4 +1,4 @@
-def pipeline(project_subdir: str, log_flow: list, clean_data: bool = True, start: int = None, end: int = None, to_project_dir: bool = False, project_dir: str = None):
+def pipeline(project_subdir: str, log_flow: list, clean_data: bool = True, start: int = None, end: int = None, to_project_dir: bool = False, project_dir: str = None, generate_df:bool=True):
     # Импорт сторонних библиотек
     import os
     import compress_json as cj
@@ -27,31 +27,32 @@ def pipeline(project_subdir: str, log_flow: list, clean_data: bool = True, start
             process_corpora_dataframes(
                 corpora_tokens_output, data_output, log_flow, start, end)
 
-            # Создание общего датафрейма
-            try:
-                log_flow.append(LogString(
-                    'warning', f'Создание датасета {data_output}...'))
-                main_df = concat_datasets(data_output, log_flow).to_json(
-                    orient='table', force_ascii=False)
-                log_flow.append(LogString(
-                    'success', f'Датасеты из директории {data_output} успешно объединены'))
-
-                # Вывод данных
+            if generate_df:
+                # Создание общего датафрейма
                 try:
-                    cj.dump(main_df, os.path.join(corpora_dataset_output,
-                            f'{os.path.split(project_subdir)[-1]}_corpora_dataset.json.gz'), json_kwargs={'ensure_ascii': False})
                     log_flow.append(LogString(
-                        'success', f'Датасет "{os.path.split(project_subdir)[-1]}_corpora_dataset.json.gz" успешно создан'))
+                        'warning', f'Создание датасета {data_output}...'))
+                    main_df = concat_datasets(data_output, log_flow).to_json(
+                        orient='table', force_ascii=False)
+                    log_flow.append(LogString(
+                        'success', f'Датасеты из директории {data_output} успешно объединены'))
 
-                    # Очистка директорий с промежуточными данными
-                    if clean_data is True:
-                        delete_dir(data_output, log_flow)
+                    # Вывод данных
+                    try:
+                        cj.dump(main_df, os.path.join(corpora_dataset_output,
+                                f'{os.path.split(project_subdir)[-1]}_corpora_dataset.json.gz'), json_kwargs={'ensure_ascii': False})
+                        log_flow.append(LogString(
+                            'success', f'Датасет "{os.path.split(project_subdir)[-1]}_corpora_dataset.json.gz" успешно создан'))
+
+                        # Очистка директорий с промежуточными данными
+                        if clean_data is True:
+                            delete_dir(data_output, log_flow)
+                    except Exception as e:
+                        log_flow.append(
+                            LogString('danger', f'Ошибка вывода общего для корпуса датасета\n⤷{e}\n'))
                 except Exception as e:
                     log_flow.append(
-                        LogString('danger', f'Ошибка вывода общего для корпуса датасета\n⤷{e}\n'))
-            except Exception as e:
-                log_flow.append(
-                    LogString('danger', f'Ошибка объединения датасетов\n⤷{e}\n'))
+                        LogString('danger', f'Ошибка объединения датасетов\n⤷{e}\n'))
         except Exception as e:
             log_flow.append(
                 LogString('danger', f'Ошибка обработки токенов\n⤷{e}\n'))

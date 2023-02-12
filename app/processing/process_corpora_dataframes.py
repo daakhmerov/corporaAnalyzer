@@ -22,7 +22,6 @@ def process_corpora_dataframes(input_gz_json_files_dir: str, df_output_dir: str,
     try:
         for file in tqdm(all_files):
             if os.path.splitext(file)[-1] == '.gz':
-                print(os.path.splitext(file)[-1])
                 try:
                     process_result = tokens_to_df(file, df_output_dir)
                     log_flow.append(process_result)
