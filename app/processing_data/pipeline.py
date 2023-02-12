@@ -1,4 +1,4 @@
-def pipeline(project_subdir:str, log_flow:list, clean_data:bool = True, start:int=None, end:int=None):
+def pipeline(project_subdir:str, log_flow:list, clean_data:bool = True, start:int=None, end:int=None, to_project_dir:bool=False, project_dir:str=None):
     # Импорт сторонних библиотек
     import os
     import compress_json as cj
@@ -8,7 +8,10 @@ def pipeline(project_subdir:str, log_flow:list, clean_data:bool = True, start:in
 
     # Пути
     data_output = os.path.join(project_subdir, 'data')
-    corpora_dataset_output = os.path.join(project_subdir, 'corpora_dataset_output')
+    if to_project_dir is True and project_dir != None:
+        corpora_dataset_output = os.path.join(project_dir, 'project_datasets_output')
+    else:
+        corpora_dataset_output = os.path.join(project_subdir, 'corpora_dataset_output')
     corpora_tokens_output = os.path.join(project_subdir, 'tokens')
 
     # Обработка данных
