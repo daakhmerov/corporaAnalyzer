@@ -29,6 +29,8 @@ def pipeline(project_subdir: str, log_flow: list, clean_data: bool = True, start
 
             # Создание общего датафрейма
             try:
+                log_flow.append(LogString(
+                    'warning', f'Создание датасета {data_output}...'))
                 main_df = concat_datasets(data_output).to_json(
                     orient='table', force_ascii=False)
                 log_flow.append(LogString(
