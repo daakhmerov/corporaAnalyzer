@@ -1,12 +1,11 @@
-def df_from_gzjson(gz_json_file_path:str, output_path:str = '.\\df_outputs', start_obj:int=0, end_obj:int=-1):
+def tokens_to_df(gz_json_file_path:str, output_dir:str):
     # Импорт сторонних модулей
     import os
-    import openpyxl
     import pandas as pd
     import compress_json as cj
 
     # Импорт локальных модулей
-    from app import export_compress_df
+    from app import LogString
 
     # Пути
     full_file_name = os.path.split(gz_json_file_path)[-1]
@@ -14,11 +13,11 @@ def df_from_gzjson(gz_json_file_path:str, output_path:str = '.\\df_outputs', sta
 
     # Ввод данных
     ## Загрузка gz.json-файла с данными газеты
-    newspaper_obj_list= cj.load(gz_json_file_path)[start_obj:end_obj]
+    newspaper_obj_list= cj.load(gz_json_file_path)
 
     # Создание каталога для вывода 
     try:
-        os.mkdir(output_path)
+        os.mkdir(output_dir)
     except:
         pass
 
@@ -66,5 +65,5 @@ def df_from_gzjson(gz_json_file_path:str, output_path:str = '.\\df_outputs', sta
     df = pd.DataFrame(data)
 
     # Вывод xlsx.gz-файла датафрейма с данными газеты
-    export_compress_df(df, output=f'{output_path}\\{only_file_name}.xlsx.gz')
-    return {'status':'Success', 'log_string':f'-- "Файл {full_file_name} успешно экспортирован в формате .xlsx" --'}
+    cj.dump(df.to_json(orient='table', index=False, force_ascii=False), os.path.join(output_dir, f'{only_file_name}.json.gz'), json_kwargs = {'ensure_ascii': False})
+    return LogString('success', f'Файл {full_file_name} успешно преобразован в pandas-датафрейм в формате JSON')

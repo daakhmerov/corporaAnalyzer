@@ -1,11 +1,11 @@
-def process_newspaper(pdf_file_path:str, output_path:str = '.'):
+def process_newspaper(pdf_file_path:str, log_flow:list, output_path:str):
     # Импорт сторонних модулей
     import os
     import PyPDF2
     import compress_json as cj
 
     # Импорт локальных модулей
-    from app import preprocess_text, word_tokenize_text, parse_filename, parse_issue_date
+    from app import preprocess_text, word_tokenize_text, parse_filename, parse_issue_date, LogString
 
     # Ввод данных
     full_file_name = os.path.split(pdf_file_path)[-1]
@@ -23,7 +23,7 @@ def process_newspaper(pdf_file_path:str, output_path:str = '.'):
     reader = PyPDF2.PdfReader(pdf_file)
 
     ## Парсинг даты
-    parsed_date = parse_issue_date(pdf_file_path)
+    parsed_date = parse_issue_date(pdf_file_path, log_flow)
 
     ## Создание переменной "pages", в которой хранится список предобработанных текстов, полученных с каждой из страниц газеты
     pages = [preprocess_text(page.extract_text()) for page in reader.pages]
@@ -50,5 +50,5 @@ def process_newspaper(pdf_file_path:str, output_path:str = '.'):
             words.append(token)
 
     # Вывод данных
-    cj.dump(words, f'{output_path}/{only_file_name}.json.gz', json_kwargs = {'ensure_ascii': False})
-    return {'status':'Success', 'log_string':f'-- Файл "{os.path.split(pdf_file_path)[-1]}" успешно обработан --'}
+    cj.dump(words, os.path.join(output_path, f'{only_file_name}.json.gz'), json_kwargs = {'ensure_ascii': False})
+    return LogString('success', f'Файл "{os.path.split(pdf_file_path)[-1]}" успешно обработан')

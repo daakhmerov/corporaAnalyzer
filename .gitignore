@@ -1,8 +1,4 @@
 .venv
-logs_output
-output
-__pycache__
-df_logs_output
-df_output
-logs_output
-join_dfs.py
+.gitignore
+README.txt
+app/__pycache__
