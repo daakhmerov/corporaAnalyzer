@@ -1,4 +1,4 @@
-def _get_bigrams(token_index, tokens):
+def get_bigrams(token_index, tokens):
     if token_index > 0 and token_index < len(tokens) - 1:
         return [
             tokens[token_index-1:token_index+1],
@@ -28,5 +28,5 @@ def word_tokenize_text(text_on_page: str):
             sent, language='russian') if token not in string.punctuation]
         for index, token in enumerate(tokens):
             text_tokens.append(
-                {'token': token, 'bigrams': _get_bigrams(index, tokens)})
+                {'token': token, 'bigrams': get_bigrams(index, tokens)})
     return text_tokens

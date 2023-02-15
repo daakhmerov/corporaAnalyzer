@@ -1,3 +1,52 @@
+# Импорт локальных библиотек
+from ..utilities.log import Warning, Success, Error_, LogString
+
+
+def parse_filename(pdf_file_name: str):
+    # Импорт необходимых библиотек
+    import re
+    import os
+
+    # Обработка данных
+    # Только имя файла
+    file_name = os.path.splitext(pdf_file_name)[0]
+    # Парсинг номера газеты
+    number_pattern = r'№ \d+'
+
+    full_number_parsed = re.findall(number_pattern, file_name)
+    if len(full_number_parsed) > 0:
+        number_parsed = re.findall(r'\d{1,3}', full_number_parsed[0])[0]
+    else:
+        number_parsed = None
+
+    # Парсинг названия
+    name_pattern = r'[а-яА-Я]+'
+
+    name_parsed = re.findall(name_pattern, file_name)
+    if len(name_parsed) > 0:
+        name_parsed = name_parsed[0]
+    else:
+        name_parsed = None
+
+    # Парсинг года
+    year_pattern = r'\d{4}'
+
+    year_parsed = re.findall(year_pattern, file_name)
+    if len(year_parsed) > 0:
+        year_parsed = year_parsed[0]
+    else:
+        year_parsed = None
+
+    # Вывод данных
+    result = {
+        'newspaperName': name_parsed,
+        'newspaperYear': year_parsed,
+        'newspaperNumber': number_parsed
+    }
+
+    return result
+
+
 def parse_issue_date(pdf_file_path: str, log_flow: list):
     # Импорт сторонних модулей
     import os
@@ -36,27 +85,26 @@ def parse_issue_date(pdf_file_path: str, log_flow: list):
     all_occurences = [e.strip().split(' ')
                       for e in re.findall(pattern, search_area)]
 
-    # Определение дня и года издания газеты на осн. подсчёта частотности
+    # Определение дня издания газеты на осн. подсчёта частотности
     try:
         day = Counter([entry[0]
                        for entry in all_occurences]).most_common(1)[0][0]
     except Exception as e:
-        log_flow.append(LogString(
-            'danger', f'День выпуска газеты {os.path.split(pdf_file_path)[-1]} не определенf\n⤷{e}\n'))
+        Error_(f'В газете {pdf_file_path} не удалось определить день выпуска',
+               e).append_and_print(log_flow)
         day = None
 
+    # Определение года издания газеты на осн. подсчёта частотности
     try:
         year = Counter([entry[2]
                         for entry in all_occurences]).most_common(1)[0][0]
-    except Exception as e_1:
+    except:
         try:
             year = re.findall(r'\d{4}', os.path.splitext(
                 os.path.split(pdf_file_path)[-1])[0])[0]
-            log_flow.append(LogString(
-                'success', f'Год выпуска газеты {os.path.split(pdf_file_path)[-1]} не определен, но удалось произвести парсинг года выпуска в имени файла\n⤷{e_1}\n'))
-        except Exception as e_2:
-            log_flow.append(LogString(
-                'danger', f'Год выпуска газеты {os.path.split(pdf_file_path)[-1]} не определен\n⤷{e_2}\n'))
+        except Exception as e_inner:
+            Error_(f'В газете {pdf_file_path} не удалось определить год выпуска',
+                   e_inner).append_and_print(log_flow)
             year = None
 
     # Определение месяца издания газеты на осн. подсчёта частотности и нормализованного сходства перестановки
@@ -85,12 +133,19 @@ def parse_issue_date(pdf_file_path: str, log_flow: list):
 
         month = Counter([check_month_similarity(entry[1])
                         for entry in all_occurences]).most_common(1)[0][0]
-
-        log_flow.append(LogString(
-            'success', f'Дата выпуска газеты {os.path.split(pdf_file_path)[-1]} определена'))
     except Exception as e:
-        log_flow.append(LogString(
-            'danger', f'Месяц выпуска газеты {os.path.split(pdf_file_path)[-1]} не определен\n⤷{e}\n'))
+        Error_(f'В газете {pdf_file_path} не удалось определить месяц выпуска',
+               e).append_and_print(log_flow)
         month = None
+
+    if day != None and month != None and year != None:
+        Success(f'Дата выпуска газеты {pdf_file_path} полностью определена!').append_and_print(
+            log_flow)
+    elif None in {day, month, year}:
+        Warning(f'Дата выпуска газеты {pdf_file_path} определена частично').append_and_print(
+            log_flow)
+    else:
+        Error_(f'Дата выпуска газеты {pdf_file_path} не определена', None).append_and_print(
+            log_flow)
 
     return {'day': day, 'month': month, 'year': year}
