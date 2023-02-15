@@ -1,140 +1,126 @@
-# {'status':'Success', 'log_string':f'-- Файл "{os.path.split(pdf_file_path)[-1]}" успешно обработан --'}
+# Импорт сторонних библиотек
+import compress_json as cj
+from termcolor import colored
+
+
 class LogString:
     status: str
     message: str
 
-    def __init__(self, status, message):
+    def __init__(self, status: str, message: str):
         self.status = status
-        self.message = f'\n{message}, RAM: {self.return_ram_status()}'
-        self.log = self.return_log()
-        self.bash = self.print_to_bash()
-        self.dict = self.to_dict()
+        self.message = message
 
-    def return_log(self):
-        # Импорт сторонних библиотек
-        from termcolor import colored
-
-        # Обработка данных
-        if self.status == 'success':
-            color = 'green'
-        elif self.status == 'warning':
-            color = 'yellow'
-        elif self.status == 'danger':
-            color = 'light_red'
-        elif self.status == 'section':
-            color = 'grey'
-        else:
-            color = 'red'
-
-        return colored(self.message, color)
-
-    def return_ram_status(self):
-        import psutil
-        import os
-
-        # return the memory usage in percentage like top
-        process = psutil.Process(os.getpid())
-        mem = process.memory_percent()
-        return round(mem, 2)
-
-    def print_to_bash(self):
-        print(self.return_log())
+    def pbash(self, color: str = 'white'):
+        print(colored(f'\n{self.message}', color))
 
     def __repr__(self):
-        return f'<LogString. Status: {self.status}, message: {self.message.strip()}>'
+        return f"LogString(status='{self.status}', message='{self.message}')"
 
-    def to_dict(self):
-        return {'status': self.status, 'description': self.message.strip()}
+    def __str__(self):
+        return f'{self.status.capitalize()}: {self.message}'
 
+    def append_and_print(self, log_flow: list):
+        self.pbash()
+        self.append_to_flow(log_flow)
 
-def log_to_json(log_flow: list, project_dir: str):
-    # Импорт сторонних библиотек
-    import os
-    import json
-    from datetime import datetime
-
-    # Пути
-    log_output_dir = os.path.join(project_dir, '.logs')
-
-    # Переменные
-    today = datetime.now()
-
-    # Создание каталога для логов
-    try:
-        os.mkdir(log_output_dir)
-    except:
-        pass
-
-    # Вывод данных
-    with open(os.path.join(log_output_dir, f'log_{today.strftime("%b-%d-%Y %H-%M-%S")}.json'), 'w+', encoding='utf-8') as log:
-        data = [log.dict for log in log_flow]
-        json.dump(data, log, ensure_ascii=False)
+    def append_to_flow(self, log_flow: list):
+        log_flow.append(self)
 
 
-def log_to_html(log_flow: list, project_dir: str):
-    # Импорт сторонних модулей
-    import os
-    from datetime import datetime
+class Error_(LogString):
+    def __init__(self, message: str, error: str | Exception | None):
+        super().__init__(status='error', message=message)
+        self.error = error
 
-    # Пути
-    log_output_dir = os.path.join(project_dir, '.logs')
-
-    # Локальные переменные
-    today = datetime.now()
-
-    # Обработка данных
-    # Создание списка log_html_fragments для хранения html-фрагментов с текстом лога
-    log_html_fragments = []
-
-    # Добавление html-элементов в список log_html_fragments
-    for i, log in enumerate(log_flow):
-        status = log.status
-        string_text = log.message.strip()
-
-        if status == 'success':
-            html_code = f'<p style="color:#198754"><b>{i}</b>: {string_text}</p><hr><br>'
-        elif status == 'warning':
-            html_code = f'<p style="color:#ffc107"><b>{i}</b>: {string_text}</p><hr><br>'
-        elif status == 'section':
-            html_code = f'<h2 style="color:#181818">{string_text}</h2><br><br>'
+    def pbash(self):
+        if self.error != None:
+            print(colored(f'\n{self.message}\n↳{self.error}\n', 'red'))
         else:
-            html_code = f'<p style="color:#dc3545"><b>{i}</b>: {string_text}</p><hr><br>'
+            print(colored(f'\n{self.message}', 'red'))
 
-        log_html_fragments.append(html_code)
+    def append_and_print(self, log_flow: list):
+        return super().append_and_print(log_flow)
 
-    # Создание html-строки
-    html_log_text = '\n'.join(log_html_fragments)
+    def __repr__(self):
+        return super().__repr__()
 
-    # Вывод данных
-    # Файл шаблона
-    template = f'''
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <title>Log — {today.strftime("%b-%d-%Y %H-%M-%S")}</title>
-    </head>
-    <body>
-        <div class="container">
-            <div class = "row" style="margin-bottom:4rem; margin-top:4rem">
-                <h1>Log — {today.strftime("%b-%d-%Y %H-%M-%S")}</h1>
-            </div>
-            <div class = "row">
-                {html_log_text}
-            </div>
-        </div>
-    </body>
-    </html>
-    '''
-    # Создание каталога для логов
-    try:
-        os.mkdir(log_output_dir)
-    except:
-        pass
+    def __str__(self):
+        return super().__repr__()
 
-    # Вывод html-файла с логом
-    with open(os.path.join(log_output_dir, f'log_{today.strftime("%b-%d-%Y %H-%M-%S")}.html'), 'w+', encoding='utf-8') as html:
-        html.write(template)
+    def append_to_flow(self, log_flow: list):
+        return super().append_to_flow(log_flow)
+
+
+class Success(LogString):
+    def __init__(self, message: str):
+        super().__init__(status='success', message=message)
+
+    def append_and_print(self, log_flow: list):
+        return super().append_and_print(log_flow)
+
+    def pbash(self):
+        super().pbash('green')
+
+    def __repr__(self):
+        return super().__repr__()
+
+    def __str__(self):
+        return super().__repr__()
+
+    def append_to_flow(self, log_flow: list):
+        return super().append_to_flow(log_flow)
+
+
+class Warning(LogString):
+    def __init__(self, message: str):
+        super().__init__(status='warning', message=message)
+
+    def pbash(self):
+        return super().pbash('yellow')
+
+    def append_and_print(self, log_flow: list):
+        return super().append_and_print(log_flow)
+
+    def __repr__(self):
+        return super().__repr__()
+
+    def __str__(self):
+        return super().__repr__()
+
+    def append_to_flow(self, log_flow: list):
+        return super().append_to_flow(log_flow)
+
+
+class Log:
+    def __init__(self, project_dir: str):
+        self.flow = []
+        self.project_dir = project_dir
+
+    def to_json(self):
+        # Импорт сторонних библиотек
+        import os
+        import json
+        from datetime import datetime
+
+        # Пути
+        log_output_dir = os.path.join(self.project_dir, '.logs')
+
+        # Переменные
+        today = datetime.now()
+
+        # Создание каталога для логов
+        try:
+            os.mkdir(log_output_dir)
+        except:
+            pass
+
+        # Вывод данных
+        data = [{'status': log.status, 'message': log.message if log.status !=
+                 'error' else f'{log.message} → {log.error}'} for log in self.flow]
+        cj.dump(
+            data,
+            os.path.join(log_output_dir,
+                         f'log_{today.strftime("%b-%d-%Y %H-%M-%S")}.json.gz'),
+            json_kwargs={'ensure_ascii': False}
+        )
