@@ -101,9 +101,9 @@ class Document:
 
             # Типы данных в датафрейме, в котором будут содержаться токены и прочая информация
             types = {
-                'id': 'category',
-                'token': 'category',
-                'bigrams': 'category',
+                'id': 'str',
+                'token': 'str',
+                'bigrams': 'str',
                 'filename': 'category',
                 'page': np.int8,
                 'newspaper_name': 'category',

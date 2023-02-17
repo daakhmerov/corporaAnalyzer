@@ -79,20 +79,43 @@ def parse_issue_date(pdf_file_path: str, log_flow: list):
 
     # Поиск даты выпуска газеты
     # Патерн регулярного выражения для поиска даты выпуска газеты
-    pattern = r'\d{1,2}\s{0,3}[а-яА-Я]+\s{0,3}19\d{2}'
+    pattern = r'\d{1,2}\s{0,3}[а-яА-Я]+\s{0,3}19[5-9]{1}[0-9]{1}'
 
     # Определение всех вхождений дат
-    all_occurences = [e.strip().split(' ')
-                      for e in re.findall(pattern, search_area)]
+    def parse_occurence(occurence:str):
+        # Парсинг числа в строке
+        day = re.search(r'\d{1,2}', occurence).group(0)
+        if int(day) > 31:
+            day = 0
+        else:
+            day = int(day)
+
+        month = re.search(r'[а-яА-Я]+', occurence).group(0)
+        if len(month) == 0:
+            month = 'не определен'
+
+        year = re.search(r'19[5-9]{1}[0-9]{1}', occurence).group(0)
+        if len(year) == 0:
+            year = 1001
+        else:
+            year = int(year)
+        return [day, month, year]
+                
+        
+    all_occurences = [parse_occurence(e) for e in re.findall(
+        pattern, search_area)]
+
+    print(all_occurences)
 
     # Определение дня издания газеты на осн. подсчёта частотности
     try:
         day = Counter([entry[0]
                        for entry in all_occurences]).most_common(1)[0][0]
+
     except Exception as e:
         Error_(f'В газете {pdf_file_path} не удалось определить день выпуска',
                e).append_and_print(log_flow)
-        day = None
+        day = 0
 
     # Определение года издания газеты на осн. подсчёта частотности
     try:
@@ -105,7 +128,7 @@ def parse_issue_date(pdf_file_path: str, log_flow: list):
         except Exception as e_inner:
             Error_(f'В газете {pdf_file_path} не удалось определить год выпуска',
                    e_inner).append_and_print(log_flow)
-            year = None
+            year = 1001
 
     # Определение месяца издания газеты на осн. подсчёта частотности и нормализованного сходства перестановки
     try:
@@ -136,12 +159,12 @@ def parse_issue_date(pdf_file_path: str, log_flow: list):
     except Exception as e:
         Error_(f'В газете {pdf_file_path} не удалось определить месяц выпуска',
                e).append_and_print(log_flow)
-        month = None
+        month = 'не определен'
 
-    if day != None and month != None and year != None:
+    if day != 0 and month != 'не определен' and year != 1001:
         Success(f'Дата выпуска газеты {pdf_file_path} полностью определена!').append_and_print(
             log_flow)
-    elif None in {day, month, year}:
+    elif day == 0 or month == 'не определен' or year == 1001:
         Warning(f'Дата выпуска газеты {pdf_file_path} определена частично').append_and_print(
             log_flow)
     else:

@@ -8,5 +8,5 @@ from app.corpora.corpora import Corpora
 from app.document.document import Document
 from app.launcher.launcher import welcome_page
 name = 'corporaAnalyzer'
-__version__ = '0.2'
+__version__ = '0.2.1'
 description = 'corporaAnalyzer — программа для анализа корпусов текстов'
