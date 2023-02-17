@@ -1,1 +1,1 @@
-# newspaperAnalyzer
+# corporaAnalyzer
