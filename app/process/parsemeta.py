@@ -11,7 +11,7 @@ def parse_filename(pdf_file_name: str):
     # Только имя файла
     file_name = os.path.splitext(pdf_file_name)[0]
     # Парсинг номера газеты
-    number_pattern = r'№ \d+'
+    number_pattern = r'№\s{1}\d+'
 
     full_number_parsed = re.findall(number_pattern, file_name)
     if len(full_number_parsed) > 0:
